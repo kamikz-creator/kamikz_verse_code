@@ -1,0 +1,56 @@
+player_widget_manager := class():
+
+    PlayerCounter_RB:player_counter_device
+    PlayerCounter_FFA:player_counter_device
+    
+    ScoreText_RB<localizes>(ScoreRB: int) :   message = "RB :{ScoreRB}"
+    ScoreText_FFA<localizes>(ScoreFFA: int) : message = "FFA:{ScoreFFA}"
+ 
+    score_widget_RB : text_block = text_block{DefaultTextColor:=  color{R:=1.0, G:=1.0, B:=1.0},DefaultJustification:=text_justification.Center}
+    score_widget_FFA : text_block = text_block{DefaultTextColor:=  color{R:=1.0, G:=1.0, B:=1.0},DefaultJustification:=text_justification.Center}
+   
+    var bar_width : float = 256.0
+    var bar_height : float = 30.0
+    var offset_top : float = 400.0
+    var offset_Left : float = 640.0
+
+  CreateWidget(score1 : int,score2 : int,score3 : int,score4 : int) : canvas =
+        score_widget_RB.SetText(ScoreText_RB(score1))
+        score_widget_FFA.SetText(ScoreText_FFA(score2))
+        
+        MyCanvas : canvas = canvas:
+            
+            Slots := array:
+                canvas_slot: #text_RB
+                    Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.5}, Maximum := vector2{X := 0.0, Y := 0.5}}
+                    Offsets := margin{Top := 24.0, Left := 150.0, Right := 100.0}
+                    Alignment := vector2{X := 0.0, Y := 0.0}
+                    SizeToContent := false
+                    ZOrder := {Z := 2}
+                    Widget := score_widget_RB
+                canvas_slot: #text_FFA
+                    Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.5}, Maximum := vector2{X := 0.0, Y := 0.5}}
+                    Offsets := margin{Top := 52.0, Left := 150.0, Right := 100.0}
+                    Alignment := vector2{X := 0.0, Y := 0.0}
+                    SizeToContent := false
+                    ZOrder := {Z := 2}
+                    Widget := score_widget_FFA
+                canvas_slot:#RB
+                    Anchors := anchors{Minimum := vector2{X:=0.5, Y:=0.0}, Maximum := vector2{X:=0.5, Y:=0.0}}
+                    Offsets := margin{Top := offset_top,Left := offset_Left, Right := 0.0, Bottom := 0.0}
+                    Alignment := vector2{X:=0.0, Y:=0.0}
+                    SizeToContent := true
+                    Widget := color_block:
+                        DefaultColor := NamedColors.CornflowerBlue
+                        DefaultOpacity := 1.0
+                        DefaultDesiredSize := vector2{X := bar_width *(1.0 - score1*1.0)+1.0 , Y := bar_height}
+                canvas_slot:#FFA
+                    Anchors := anchors{Minimum := vector2{X:=0.5, Y:=0.0}, Maximum := vector2{X:=0.5, Y:=0.0}}
+                    Offsets := margin{Top := offset_top+80.0,Left := offset_Left, Right := 0.0, Bottom := 0.0}
+                    Alignment := vector2{X:=0.0, Y:=0.0}
+                    SizeToContent := true
+                    Widget := color_block:
+                        DefaultColor := NamedColors.Green
+                        DefaultOpacity := 1.0
+                        DefaultDesiredSize := vector2{X := bar_width *(1.0 - score2*1.0)+1.0, Y := bar_height}
+                              
