@@ -1,40 +1,78 @@
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /Fortnite.com/UI }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/UI }
+using { /Verse.org/Colors }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+
 player_widget_manager := class():
 
     PlayerCounter_RB:player_counter_device
     PlayerCounter_FFA:player_counter_device
+    PlayerCounter_BF:player_counter_device
+    PlayerCounter_ZW:player_counter_device
     
     ScoreText_RB<localizes>(ScoreRB: int) :   message = "RB :{ScoreRB}"
     ScoreText_FFA<localizes>(ScoreFFA: int) : message = "FFA:{ScoreFFA}"
- 
+    ScoreText_BF<localizes>(ScoreBF: int) :   message = "BF :{ScoreBF}"
+    ScoreText_ZW<localizes>(ScoreZW: int) :   message = "ZW :{ScoreZW}"
+    
+
     score_widget_RB : text_block = text_block{DefaultTextColor:=  color{R:=1.0, G:=1.0, B:=1.0},DefaultJustification:=text_justification.Center}
     score_widget_FFA : text_block = text_block{DefaultTextColor:=  color{R:=1.0, G:=1.0, B:=1.0},DefaultJustification:=text_justification.Center}
-   
+    score_widget_BF : text_block = text_block{DefaultTextColor:=  color{R:=1.0, G:=1.0, B:=1.0},DefaultJustification:=text_justification.Center}
+    score_widget_ZW : text_block = text_block{DefaultTextColor:=  color{R:=1.0, G:=1.0, B:=1.0},DefaultJustification:=text_justification.Center}
+
+    var FFA_NUM : float = 5.0
     var bar_width : float = 256.0
     var bar_height : float = 30.0
     var offset_top : float = 400.0
     var offset_Left : float = 640.0
-
-  CreateWidget(score1 : int,score2 : int,score3 : int,score4 : int) : canvas =
+  
+     
+    CreateWidget(score1 : int,score2 : int,score3 : int,score4 : int) : canvas =
         score_widget_RB.SetText(ScoreText_RB(score1))
         score_widget_FFA.SetText(ScoreText_FFA(score2))
-        
-        MyCanvas : canvas = canvas:
+        score_widget_BF.SetText(ScoreText_BF(score3))
+        score_widget_ZW.SetText(ScoreText_ZW(score4))
+        score_widget_ZW.SetText(ScoreText_ZW(score4))
+   
+
+        var All_member : float = score1*1.0 + score2*1.0 + score3*1.0 + score4*1.0
+
+         MyCanvas : canvas = canvas:
             
             Slots := array:
-                canvas_slot: #text_RB
+                canvas_slot:
                     Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.5}, Maximum := vector2{X := 0.0, Y := 0.5}}
                     Offsets := margin{Top := 24.0, Left := 150.0, Right := 100.0}
                     Alignment := vector2{X := 0.0, Y := 0.0}
                     SizeToContent := false
                     ZOrder := {Z := 2}
                     Widget := score_widget_RB
-                canvas_slot: #text_FFA
+                canvas_slot:
                     Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.5}, Maximum := vector2{X := 0.0, Y := 0.5}}
                     Offsets := margin{Top := 52.0, Left := 150.0, Right := 100.0}
                     Alignment := vector2{X := 0.0, Y := 0.0}
                     SizeToContent := false
                     ZOrder := {Z := 2}
                     Widget := score_widget_FFA
+                canvas_slot:
+                    Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.5}, Maximum := vector2{X := 0.0, Y := 0.5}}
+                    Offsets := margin{Top := 80.0, Left := 150.0, Right := 100.0}
+                    Alignment := vector2{X := 0.0, Y := 0.0}
+                    SizeToContent := false
+                    ZOrder := {Z := 2}
+                    Widget := score_widget_BF
+                canvas_slot:
+                    Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.5}, Maximum := vector2{X := 0.0, Y := 0.5}}
+                    Offsets := margin{Top := 108.0, Left := 150.0, Right := 100.0}
+                    Alignment := vector2{X := 0.0, Y := 0.0}
+                    SizeToContent := false
+                    ZOrder := {Z := 2}
+                    Widget := score_widget_ZW 
                 canvas_slot:#RB
                     Anchors := anchors{Minimum := vector2{X:=0.5, Y:=0.0}, Maximum := vector2{X:=0.5, Y:=0.0}}
                     Offsets := margin{Top := offset_top,Left := offset_Left, Right := 0.0, Bottom := 0.0}
@@ -43,7 +81,7 @@ player_widget_manager := class():
                     Widget := color_block:
                         DefaultColor := NamedColors.CornflowerBlue
                         DefaultOpacity := 1.0
-                        DefaultDesiredSize := vector2{X := bar_width *(1.0 - score1*1.0)+1.0 , Y := bar_height}
+                        DefaultDesiredSize := vector2{X := bar_width *(1.0 - score1*1.0) +1.0, Y := bar_height}
                 canvas_slot:#FFA
                     Anchors := anchors{Minimum := vector2{X:=0.5, Y:=0.0}, Maximum := vector2{X:=0.5, Y:=0.0}}
                     Offsets := margin{Top := offset_top+80.0,Left := offset_Left, Right := 0.0, Bottom := 0.0}
@@ -52,5 +90,45 @@ player_widget_manager := class():
                     Widget := color_block:
                         DefaultColor := NamedColors.Green
                         DefaultOpacity := 1.0
-                        DefaultDesiredSize := vector2{X := bar_width *(1.0 - score2*1.0)+1.0, Y := bar_height}
-                              
+                        DefaultDesiredSize := vector2{X := bar_width *(1.0 - score2*1.0) +1.0, Y := bar_height}
+                canvas_slot:#BF
+                    Anchors := anchors{Minimum := vector2{X:=0.5, Y:=0.0}, Maximum := vector2{X:=0.5, Y:=0.0}}
+                    Offsets := margin{Top := offset_top+160.0,Left := offset_Left, Right := 0.0, Bottom := 0.5}
+                    Alignment := vector2{X:=0.5, Y:=0.0}
+                    SizeToContent := true
+                    Widget := color_block:
+                        DefaultColor := NamedColors.Orange
+                        DefaultOpacity := 1.0
+                        DefaultDesiredSize := vector2{X := bar_width *(score1*1.0+score2*1.0+score3*1.0)/ All_member , Y := bar_height}
+                canvas_slot:#ZW
+                    Anchors := anchors{Minimum := vector2{X:=0.5, Y:=0.0}, Maximum := vector2{X:=0.5, Y:=0.0}}
+                    Offsets := margin{Top := offset_top+240.0,Left := offset_Left, Right := 0.0, Bottom := 0.0}
+                    Alignment := vector2{X:=0.5, Y:=0.0}
+                    SizeToContent := true
+                    Widget := color_block:
+                        DefaultColor := NamedColors.Orange
+                        DefaultOpacity := 1.0
+                        DefaultDesiredSize := vector2{X := bar_width *(score1*1.0+score2*1.0+score3*1.0)/ All_member , Y := bar_height}
+ 
+    ShowWidget(Agent : agent) : void =
+        Print("ShowUI")
+        #AgentからPlayerUIを取得する
+        if (Player := player[Agent], PlayerUI := GetPlayerUI[Player]):
+            Print("Create UI")
+            NewUI := CreateWidget(0,0,0,0)
+            PlayerUI.AddWidget(NewUI, player_ui_slot{InputMode := ui_input_mode.None})
+            spawn {UpdateWidget(Agent)}
+
+    UpdateWidget(Agent : agent)<suspends>: void =
+        loop:
+            Sleep(1.0)
+            score_RB := PlayerCounter_RB.GetCount()
+            score_FFA:= PlayerCounter_FFA.GetCount()
+            score_BF:=  PlayerCounter_BF.GetCount()
+            score_ZW:=  PlayerCounter_ZW.GetCount()
+           
+            score_widget_RB.SetText(ScoreText_RB(score_RB ))
+            score_widget_FFA.SetText(ScoreText_FFA(score_FFA ))
+            score_widget_BF.SetText(ScoreText_BF(score_BF ))
+            score_widget_ZW.SetText(ScoreText_ZW(score_ZW ))
+            CreateWidget(score_RB,score_FFA,score_BF,score_ZW)
