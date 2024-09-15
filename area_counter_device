@@ -1,0 +1,54 @@
+using { /Fortnite.com/Devices }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /Fortnite.com/UI }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/UI }
+using { /Verse.org/Colors }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+
+area_counter_device:= class(creative_device):
+
+    
+    @editable    RB_PlayerCounter:player_counter_device=player_counter_device{}
+    @editable    FFA_PlayerCounter:player_counter_device=player_counter_device{}
+    @editable    BF_PlayerCounter:player_counter_device=player_counter_device{}
+    @editable    ZW_PlayerCounter:player_counter_device=player_counter_device{}
+ 
+    #score_manager:score_manager_device=score_manager_device{}
+    var PlayerModel: [player]?player_widget_manager = map{}
+
+
+    OnBegin<override>()<suspends>:void=
+        # 指定の人数がゾーンに入ったときに発火する
+        FFA_PlayerCounter.CountSucceedsEvent.Subscribe(CountSucsses)
+        # ゾーンにプレイヤーが入ったときに発火する（そのプレイヤーのagentも取得できる）
+        FFA_PlayerCounter.CountedEvent.Subscribe(PlayerEntered)
+        # ゾーンからプレイヤーが出たときに発火する（そのプレイヤーのagentも取得できる）
+        FFA_PlayerCounter.RemovedEvent.Subscribe(PlayerExited)
+ 
+        
+        spawn {CheckForPlayers()}
+ 
+    CountSucsses():void=
+        Print("現在ゾーンにいる人数: {FFA_PlayerCounter.GetCount()}")
+
+    PlayerEntered(Agnet:agent):void=
+        Print("プレイヤーがゾーンに入りました")
+
+    PlayerExited(Agnet:agent):void=
+        Print("プレイヤーがゾーンから出ました")
+    
+    
+
+    CheckForPlayers()<suspends>: void =
+        loop:
+            Sleep(1.0)
+            AllPlayers := GetPlayspace().GetPlayers()
+            for (Player : AllPlayers):
+                if (not PlayerModel[Player]):
+                    if (Agent := agent[Player]):
+                        PlayerWidgetInstance := player_widget_manager { PlayerCounter_RB := RB_PlayerCounter,PlayerCounter_FFA := FFA_PlayerCounter,PlayerCounter_BF := BF_PlayerCounter,PlayerCounter_ZW := ZW_PlayerCounter}
+                        if (set PlayerModel[Player] = option{PlayerWidgetInstance}):
+                            PlayerWidgetInstance.ShowWidget(Agent)
+                            spawn {PlayerWidgetInstance.UpdateWidget(Agent)}
